@@ -17,7 +17,7 @@ import cv2
 import numpy as np
 import glob
 from multiprocessing import Pool
-from resize_image import resizeimage
+from resizeimage import resizeimage
 
 np.set_printoptions(threshold=np.nan)
 
@@ -33,7 +33,7 @@ def ConvertToGray(image):
 def ConvertFromBGRToHSV(image):
     return cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
-def ConvertFramHSVToBGR(image):
+def ConvertFromHSVToBGR(image):
     return cv2.cvtColor(image, cv2.COLOR_HSV2BGR)
 
 def GetImageGray(image):
@@ -119,8 +119,9 @@ if __name__ == '__main__':
     # print GetCorrespondingImages(sys.argv[1], sys.argv[2])
     # SaveNpyImage(GetImageGray(sys.argv[1]), sys.argv[2])
     # print GetImageFlow(GetImageGray(sys.argv[1]), GetImageGray(sys.argv[2])).shape
-    img1 = GetImageGray(sys.argv[1])
-    flow = GetImageFlow(img1, GetImageGray(sys.argv[2]))
-    img2 = WarpImage(ReadImage(sys.argv[1]), flow)
-    SaveNpyImage(ReadImage(sys.argv[1]), 'test.jpg')
-    SaveNpyImage(img2, 'test_flow.jpg')
+    img = ReadImage(sys.argv[1])
+    hsv = ConvertFromBGRToHSV(img)
+    hsv[:,:,2] = 0
+    hsv[:,:,2] = 0
+    print(hsv.shape)
+    SaveNpyImage(ConvertFromHSVToBGR(hsv), sys.argv[2])
