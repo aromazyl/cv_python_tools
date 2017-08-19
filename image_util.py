@@ -30,6 +30,12 @@ def ReadImage(image):
 def ConvertToGray(image):
     return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
+def ConvertFromBGRToHSV(image):
+    return cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+def ConvertFramHSVToBGR(image):
+    return cv2.cvtColor(image, cv2.COLOR_HSV2BGR)
+
 def GetImageGray(image):
     return ConvertToGray(ReadImage(image))
 
