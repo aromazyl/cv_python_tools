@@ -23,7 +23,7 @@ np.set_printoptions(threshold=np.nan)
 
 def ReadImage(image):
     img = cv2.imread(image)
-    if image.endswith('jpg') or image.endswidth('JPG') or image.endswidth('bmp'):
+    if image.endswith('jpg') or image.endswith('JPG') or image.endswith('bmp'):
         img[:,:,[0,2]] = img[:,:,[2,0]]
     return img
 
@@ -113,7 +113,32 @@ def ResizeImage(src, shape, save_path = None):
         cover.save(save_path, image.format)
     return cover
 
+def PixelConvertRgb2Hsv(r,g,b):
+    r_,g_,b_ = r/255., g/255., b/255.
+    cmax = max(r_,g_,b_)
+    cmin = min(r_,g_,b_)
+    delta = float(cmax - cmin)
+    hue = 0.0
+    if delta == 0:
+        hue = 0
+    elif cmax == r_:
+        hue = int((g_ - b_) / delta) % 6
+    elif cmax == g_:
+        hue = ((b_ - r_) / delta) + 2
+    else:
+        hue = ((r_ - g_) / delta) + 4
+    hue = hue * 60
+    saturation = 0.0 if cmax == 0 else delta / cmax
+    value = cmax
+    return np.array(hue, saturation, value)
 
+def PixelConvertHsv2Rgb(h, s, v):
+    c = v * s
+    x = c * (1.0 - abs(int(h / 60) % 2 - 1))
+    m = v - c
+    rgb_ = lambda:((c,x,0), (x,c,0), (0,c,x), (0,x,c), (x, 0, c), (c, 0, x))
+    rgb_ = np.array(rgb_()[(int)(h / 60)])
+    return (rgb_ + m) * 255
 
 if __name__ == '__main__':
     # print GetCorrespondingImages(sys.argv[1], sys.argv[2])
