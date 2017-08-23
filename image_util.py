@@ -107,14 +107,17 @@ def ResizeImage(src, shape, save_path = None):
         cover.save(save_path, image.format)
     return cover
 
+def AddImageY(image, orign):
+    img = cv2.cvtColor(image, cv2.COLOR_BGR2YUV)
+    org = cv2.cvtColor(orign, cv2.COLOR_BGR2YUV)
+    img[:,:,0] = org[:,:,0]
+    return cv2.cvtColor(img, cv2.COLOR_YUV2BGR)
 
 
 if __name__ == '__main__':
     # print GetCorrespondingImages(sys.argv[1], sys.argv[2])
     # SaveNpyImage(GetImageGray(sys.argv[1]), sys.argv[2])
     # print GetImageFlow(GetImageGray(sys.argv[1]), GetImageGray(sys.argv[2])).shape
-    img1 = GetImageGray(sys.argv[1])
-    flow = GetImageFlow(img1, GetImageGray(sys.argv[2]))
-    img2 = WarpImage(ReadImage(sys.argv[1]), flow)
-    SaveNpyImage(ReadImage(sys.argv[1]), 'test.jpg')
-    SaveNpyImage(img2, 'test_flow.jpg')
+    image = ReadImage(sys.argv[1])
+    orign = ReadImage(sys.argv[2])
+    SaveNpyImage(AddImageY(image, orign), "test.jpg")
