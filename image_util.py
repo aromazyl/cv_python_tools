@@ -146,10 +146,26 @@ def PixelConvertHsv2Rgb(h, s, v):
     rgb_ = np.array(rgb_()[(int)(h / 60)])
     return (rgb_ + m) * 255
 
+def ReadSintelFlow(filename):
+    f = open(filename, 'rb')
+    check = np.fromfile(f, dtype=np.float32, count=1)[0]
+    width = np.fromfile(f, dtype=np.int32, count=1)[0]
+    height = np.fromfile(f, dtype=np.int32, count=1)[0]
+    size = width * height
+    tmp = np.fromfile(f, dtype=np.float32, count=-1).reshape((height, width*2))
+    u = tmp[:, np.arange(width) * 2]
+    v = tmp[:, np.arange(width) * 2 + 1]
+    return np.stack([u, v], axis=-1)
+
 if __name__ == '__main__':
     # print GetCorrespondingImages(sys.argv[1], sys.argv[2])
     # SaveNpyImage(GetImageGray(sys.argv[1]), sys.argv[2])
     # print GetImageFlow(GetImageGray(sys.argv[1]), GetImageGray(sys.argv[2])).shape
-    image = ReadImage(sys.argv[1])
-    orign = ReadImage(sys.argv[2])
-    SaveNpyImage(AddImageY(image, orign), "test.jpg")
+    # image = ReadImage(sys.argv[1])
+    # orign = ReadImage(sys.argv[2])
+    # SaveNpyImage(AddImageY(image, orign), "test.jpg")
+    # flowfilename = sys.argv[1]
+    # flow = ReadSintelFlow(flowfilename)
+    # print flow.shape
+    print ReadImage(sys.argv[1]).shape
+
