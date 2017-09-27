@@ -21,6 +21,9 @@ from resizeimage import resizeimage
 
 np.set_printoptions(threshold=np.nan)
 
+def GetAbsPath(path):
+    return os.path.abspath(path)
+
 def ReadImage(image):
     img = cv2.imread(image)
     if image.endswith('jpg') or image.endswith('JPG') or image.endswith('bmp'):
@@ -157,6 +160,13 @@ def ReadSintelFlow(filename):
     v = tmp[:, np.arange(width) * 2 + 1]
     return np.stack([u, v], axis=-1)
 
+def ContrastMeasure(image):
+    img = cv2.Laplacian(image, cv2.CV_64F)
+    sobelx = cv2.Sobel(img, cv2.CV_64F, 1, 0, ksize=5)
+    sobely = cv2.Sobel(img, cv2.CV_64F, 0, 1, ksize=5)
+    mag = cv2.magnitude(sobelx, sobely)
+    return cv2.sumElems(mag)[0] / img.shape[0] / img.shape[1]
+
 if __name__ == '__main__':
     # print GetCorrespondingImages(sys.argv[1], sys.argv[2])
     # SaveNpyImage(GetImageGray(sys.argv[1]), sys.argv[2])
@@ -167,5 +177,7 @@ if __name__ == '__main__':
     # flowfilename = sys.argv[1]
     # flow = ReadSintelFlow(flowfilename)
     # print flow.shape
-    print ReadImage(sys.argv[1]).shape
+    # print ReadImage(sys.argv[1]).shape
+    print GetAbsPath(sys.argv[1])
+    print ContrastMeasure(GetImageGray(GetAbsPath(sys.argv[1])))
 
